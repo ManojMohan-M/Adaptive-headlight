@@ -1,0 +1,37 @@
+#include <Wire.h>
+#include <BH1750.h>
+
+BH1750 lightMeter;
+
+const int relayPin = 2;  // Relay connected to digital pin 2
+const int lightThreshold = 50; // Lux threshold for turning on the relay
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  lightMeter.begin(); // Start BH1750
+
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW); // Relay OFF initially
+
+  Serial.println("BH1750 Light Sensor Initialized");
+}
+
+void loop() {
+  float lux = lightMeter.readLightLevel(); // Get light in lux
+
+  Serial.print("Light Intensity: ");
+  Serial.print(lux);
+  Serial.println(" lux");
+
+  if (lux < lightThreshold) {
+    digitalWrite(relayPin, HIGH); // Turn ON relay
+    Serial.println("Relay ON - Light is LOW");
+  } else {
+    digitalWrite(relayPin, LOW); // Turn OFF relay
+    Serial.println("Relay OFF - Light is HIGH");
+  }
+
+  delay(1000); // 1 second delay
+}
